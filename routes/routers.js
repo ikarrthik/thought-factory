@@ -1,21 +1,16 @@
 const request = require('request');
 const Promise = require('promise');
-
+var mongoose = require('mongoose');
 var router = function(app) {
 
 
   app.get('/home', function(req, res) {
 
-    res.render("home", {
+    mongoose.model('users').findOne({'emailId':'karthik.ilango@siriuscom.com'},function(err,users){
+      res.send(users);
     })
   });
 
-
-  app.get('/register', function(req, res) {
-
-    res.render("demo", {
-    })
-  });
 
   app.get('/register', function(req, res) {
 

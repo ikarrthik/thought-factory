@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var expressValidator = require('express-validator');
+var mongoose = require('mongoose');
 
 var constants = require('./constants/constant');
 // var index =require('./views/index');
@@ -27,6 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+mongoose.connect('mongodb://admin:admin@ds135619.mlab.com:35619/incognito');
+mongoose.model('users',{name :String});
 
 var routes = require('./routes/routers')(app);
 

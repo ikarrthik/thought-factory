@@ -17,7 +17,7 @@ function enrollNewProfile(){
 function enrollNewVerificationProfile(){
 	navigator.getUserMedia({audio: true}, function(stream){
 		console.log('I\'m listening... say one of the predefined phrases...');
-		onMediaSuccess(stream, createVerificationProfile, 4);
+		onMediaSuccess(streamstartListeningForIdentificati createVerificationProfile, 4);
 	}, onMediaError);
 }
 
