@@ -6,7 +6,10 @@ var thingsToRead = [
 	"If you're seein' things runnin' thru your head \n	Who can you call (ghostbusters)\n	An' invisible man sleepin' in your bed \n	Oh who ya gonna call (ghostbusters) \nI ain't afraid a no ghost \n	I ain't afraid a no ghost \n	Who ya gonna call (ghostbusters) \n	If you're all alone pick up the phone \n	An call (ghostbusters)",
 ];
 
+var audioBlob;
+
 function enrollNewProfile(){
+	console.log("Entering enroll New profile");
 	navigator.getUserMedia({audio: true}, function(stream){
 		console.log('I\'m listening... just start talking for a few seconds...');
 		console.log('Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)]);
@@ -17,7 +20,7 @@ function enrollNewProfile(){
 function enrollNewVerificationProfile(){
 	navigator.getUserMedia({audio: true}, function(stream){
 		console.log('I\'m listening... say one of the predefined phrases...');
-		onMediaSuccess(streamstartListeningForIdentificati createVerificationProfile, 4);
+		onMediaSuccess(stream, createVerificationProfile, 4);
 	}, onMediaError);
 }
 
@@ -40,6 +43,13 @@ function startListeningForVerification(){
 	}
 }
 
+function startListeningForIdentificationFromTF(){
+//	if (profileIds.length > 0 ){
+		console.log('I\'m listening from axis bank... just start talking for a few seconds...');
+		console.log('Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)]);
+		navigator.getUserMedia({audio: true}, function(stream){onMediaSuccess(stream, addAudioPlayer, 5)}, onMediaError);
+
+}
 function onMediaError(e) {
     console.error('media error', e);
 }
@@ -89,6 +99,12 @@ function verifyProfile(blob){
 
 	request.send(blob);
 }
+
+function authenticate(){
+	console.log("authenticated!!!");
+	console.log(audioBlob);
+}
+
 
 function createProfile(blob){
 	addAudioPlayer(blob);
@@ -337,6 +353,11 @@ function BurnItAll(mode = 'identification'){
 }
 
 function addAudioPlayer(blob){
+
+	console.log("audio player");
+	audioBlob = blob;
+	console.log(blob);
+
 	var url = URL.createObjectURL(blob);
 	var log = document.getElementById('log');
 

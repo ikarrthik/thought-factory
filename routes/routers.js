@@ -4,12 +4,20 @@ var mongoose = require('mongoose');
 var router = function(app) {
 
 
-  app.get('/home', function(req, res) {
+  app.get('/user', function(req, res) {
 
     mongoose.model('users').findOne({'emailId':'karthik.ilango@siriuscom.com'},function(err,users){
       res.send(users);
     })
   });
+
+
+    app.get('/axis-bank', function(req, res) {
+
+        res.render("home",{
+
+        });
+    });
 
 
   app.get('/register', function(req, res) {
