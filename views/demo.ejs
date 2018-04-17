@@ -24,7 +24,7 @@
 </style>
 </head>
 <body>
-	 
+
 <button onclick="enrollNewProfile();">Enrol for Identification</button>
 <button onclick="startListeningForIdentification();">Identify</button>
 <hr>
@@ -45,12 +45,11 @@ function onMediaSuccess(stream, callback, secondsOfAudio) {
     var input = audio_context.createMediaStreamSource(stream);
     recorder = new Recorder(input);
     recorder.record();
-    
+
 	setTimeout(() => { StopListening(callback); }, secondsOfAudio*1000);
 }
 
 function StopListening(callback){
-	console.log('...working...');
     recorder && recorder.stop();
     recorder.exportWAV(function(blob) {
         callback(blob);

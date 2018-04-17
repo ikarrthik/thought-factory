@@ -16,11 +16,10 @@ form{
 .left-container{
 width:60%;
 height:100%;
-background-color:  #A0345E;
 }
 
-.thirty-percent-width{
-  width:40%;
+.fifty-percent-width{
+  width:50%;
   height:100%;
 }
 
@@ -34,7 +33,18 @@ margin-left:10%;
 
 .incognito img {
     border-radius: 50%;
-    margin-left:4%;
-    width:19%;
+    margin-left:10%;
+    width:30%;
     border: solid 6px  #A0345E;
+}
+
+.recording{
+  margin-left:10%;
+}
+.recording a{
+  margin-left:15%;
+}
+.heading{
+  font-family: "righteous", sans-serif;
+  text-align: center;
 }

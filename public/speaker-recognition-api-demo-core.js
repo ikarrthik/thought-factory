@@ -67,8 +67,6 @@ function identifyProfile(blob){
 	request.setRequestHeader('Ocp-Apim-Subscription-Key', key);
 
 	request.onload = function () {
-		console.log('identifying profile');
-		console.log(request.responseText);
 		var location = request.getResponseHeader('Operation-Location');
 
 		if (location!=null) {
@@ -93,7 +91,6 @@ function verifyProfile(blob){
 	request.setRequestHeader('Ocp-Apim-Subscription-Key', key);
 
 	request.onload = function () {
-		console.log('verifying profile');
 		console.log(request.responseText);
 	};
 
@@ -354,10 +351,7 @@ function BurnItAll(mode = 'identification'){
 
 function addAudioPlayer(blob){
 
-	console.log("audio player");
 	audioBlob = blob;
-	console.log(blob);
-
 	var url = URL.createObjectURL(blob);
 	var log = document.getElementById('log');
 
