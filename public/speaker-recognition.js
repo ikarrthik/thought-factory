@@ -12,6 +12,13 @@ function storeAudioBlob(){
 	navigator.getUserMedia({audio: true}, function(stream){
 		console.log('I\'m listening... just start talking for a few seconds...');
 		console.log('Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)]);
+
+  //  document.getElementById('textContent').value = 'Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)];
+
+    var text = 'Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)]
+
+    $('div.total-title').text(text);
+
 		onMediaSuccess(stream, addAudioPlayer, 15);
 	}, onMediaError);
 }
@@ -57,28 +64,6 @@ function onMediaError(e) {
 }
 
 
-function getProfileID(customerID){
-
-	var data = {};
-	   $.ajax({
-              url: '/identify/'+customerID,
-  						type: 'GET',
-  						data: JSON.stringify(data),
-  						contentType: 'application/json',
-  						success: function(data) {
-
-  				   	var parsedData = JSON.parse(data);
-
-              console.log(data);
-
-              return data;
-
-  						},
-
-              error  : function() { console.log('error');}
-
-          });
-}
 
 
 function identifyProfile(){
@@ -86,7 +71,6 @@ function identifyProfile(){
 
   //Get the verification profile using the customer id
     var customerID = document.getElementById('customer_id').value;
-  //  var profileID  = getProfileID(customerID);
 
 
     var url = "/identify/"+customerID;
@@ -94,35 +78,36 @@ function identifyProfile(){
   	var request = new XMLHttpRequest();
   	request.open("GET",url,true);
     console.log(request);
+
   	request.onload = function(){
-  		console.log("Response came");
+            		console.log("Response came");
 
-      var jsonResponse = JSON.parse(request.responseText);
+                var jsonResponse = JSON.parse(request.responseText);
 
-      var profileId = jsonResponse.profileId;
-      var blob = audioBlob;
+                var profileId = jsonResponse.profileId;
+                var blob = audioBlob;
 
-      const identify = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=' + profileId;
+                const identify = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=' + profileId;
 
-      var xmlRequest = new XMLHttpRequest();
-      xmlRequest.open("POST", identify, true);
+                var xmlRequest = new XMLHttpRequest();
+                xmlRequest.open("POST", identify, true);
 
-      xmlRequest.setRequestHeader('Content-Type','application/json');
-      xmlRequest.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
+                xmlRequest.setRequestHeader('Content-Type','application/json');
+                xmlRequest.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
 
-      xmlRequest.onload = function () {
-        console.log('identifying profile');
-        console.log(xmlRequest.responseText);
-        var location = xmlRequest.getResponseHeader('Operation-Location');
+                xmlRequest.onload = function () {
+                  console.log('identifying profile');
+                  console.log(xmlRequest.responseText);
+                  var location = xmlRequest.getResponseHeader('Operation-Location');
 
-        if (location!=null) {
-          pollForIdentification(location);
-        } else {
-          console.log('Ugh. I can\'t poll, it\'s all gone wrong.');
-        }
-      };
+                  if (location!=null) {
+                    pollForIdentification(location);
+                  } else {
+                    console.log('Ugh. I can\'t poll, it\'s all gone wrong.');
+                  }
+                };
 
-      xmlRequest.send(blob);
+                xmlRequest.send(blob);
 
 
   	};
@@ -136,49 +121,51 @@ function identifyProfile(){
 
 
 function verifyProfile(blob){
-	addAudioPlayer(blob);
+    	addAudioPlayer(blob);
 
-	var verify = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=' + verificationProfile.profileId;
+    	var verify = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=' + verificationProfile.profileId;
 
-	var request = new XMLHttpRequest();
-	request.open("POST", verify, true);
+    	var request = new XMLHttpRequest();
+    	request.open("POST", verify, true);
 
-	request.setRequestHeader('Content-Type','application/json');
-	request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
+    	request.setRequestHeader('Content-Type','application/json');
+    	request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
 
-	request.onload = function () {
-		console.log('verifying profile');
-		console.log(request.responseText);
-	};
+    	request.onload = function () {
+    		console.log('verifying profile');
+    		console.log(request.responseText);
+    	};
 
-	request.send(blob);
+    	request.send(blob);
 }
 
 
-function createProfile(blob){
-	addAudioPlayer(blob);
+function createProfile(){
+      blob = audioBlob;
+    	var create = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles';
 
-	var create = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles';
+    	var request = new XMLHttpRequest();
+    	request.open("POST", create, true);
 
-	var request = new XMLHttpRequest();
-	request.open("POST", create, true);
+    	request.setRequestHeader('Content-Type','application/json');
+    	request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
 
-	request.setRequestHeader('Content-Type','application/json');
-	request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
+    	request.onload = function () {
+    		console.log('creating profile');
+    		console.log(request.responseText);
 
-	request.onload = function () {
-		console.log('creating profile');
-		console.log(request.responseText);
+    		var json = JSON.parse(request.responseText);
+    		var profileId = json.identificationProfileId;
 
-		var json = JSON.parse(request.responseText);
-		var profileId = json.identificationProfileId;
+    		// Now we can enrol this profile using the profileId
+    		enrollProfileAudio(blob, profileId);
+    	};
 
-		// Now we can enrol this profile using the profileId
-		enrollProfileAudio(blob, profileId);
-	};
+    	request.send(JSON.stringify({ 'locale' :'en-us'}));
+  }
 
-	request.send(JSON.stringify({ 'locale' :'en-us'}));
-}
+
+
 
 function enrollProfileAudio(blob, profileId){
   const enroll = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles/'+profileId+'/enroll?shortAudio=true';
@@ -205,6 +192,7 @@ function enrollProfileAudio(blob, profileId){
 
   request.send(blob);
 }
+
 
 function enrollProfileAudioForVerification(blob, profileId){
 	addAudioPlayer(blob);
@@ -260,10 +248,9 @@ function enrollProfileAudioForVerification(blob, profileId){
 			if (json.status == 'succeeded' && json.processingResult.enrollmentStatus == 'Enrolled')
 			{
 				clearInterval(enrolledInterval);
-				console.log('enrollment complete!');
-				var name = window.prompt('Who was that talking?');
-				profileIds.push(new Profile(name, profileId));
-				console.log(profileId + ' is now mapped to ' + name);
+
+        saveEnrollment(name , profileId);
+
 			}
 			else if(json.status == 'succeeded' && json.processingResult.remainingEnrollmentSpeechTime > 0) {
 				clearInterval(enrolledInterval);
@@ -279,6 +266,33 @@ function enrollProfileAudioForVerification(blob, profileId){
 		request.send();
 	}, 4000);
 }
+
+function saveEnrollment(name , profileId){
+	var customerID = document.getElementById('customer_id').value;
+  var accountID =  document.getElementById('account_id').value;
+  var name =  document.getElementById('customer_name').value;
+
+
+	// var profileDetails = {
+	// 	"customerID" : customerID,
+	// 	"name" : name,
+	// 	"profileId" : profileId
+	// }
+
+	var request = new XMLHttpRequest();
+	request.open("POST",'/enrollProfile', true);
+
+	request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+	request.onload = function()
+	{
+		console.log('getting status');
+		console.log(request.responseText);
+	};
+	request.send("customerID="+customerID+"&name="+name+"&accountID="+accountID);
+
+
+}
+
 
 function pollForIdentification(location){
 	var success = false;

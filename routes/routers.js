@@ -42,28 +42,29 @@ app.get('/identify/:customerID', function(req, res) {
 });
 
 
-  app.post('/enrollProfile', function(req, res) {
+app.post('/enrollProfile', function(req, res) {
 
-    console.log(res);
-    res.render("demo", {
-    })
-  });
+  console.log("req",req);
+  console.log(req.body);
 
-  app.post('/createProfile', function(req, res) {
 
-    console.log("creating profile ....");
-    var responseText = "create profile from node js";
-    //console.log(res);
-
-    var initializeCreateProfile = intializeProfile();
-
-      initializeCreateProfile.then(function(result){
-        console.log("Profile has been created ... ");
-        console.log(result);
+  var  stringify = JSON.stringify(req.body);
+  console.log(stringify.customerID);
+  //console.log("req1"+JSON.parse(req));
+  var UserModel = mongoose.model('users');
+   var user = new UserModel(req.body)
+   user.save(function(err){
+    if(err){
+      var responseText = "failure";
+      res.send(responseText);
+    } else{
+        //res.responseText = user;
+        var responseText = "success";
         res.send(responseText);
-      })
-
+    }
   });
+
+});
 
 
   function intializeProfile(){

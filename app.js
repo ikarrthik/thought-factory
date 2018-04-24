@@ -29,7 +29,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 mongoose.connect('mongodb://admin:admin@ds135619.mlab.com:35619/incognito');
-mongoose.model('users',{name :String});
+mongoose.model('users',{name :String , customerID :String , profileID :String ,picture :String ,accountID :String});
 
 var routes = require('./routes/routers')(app);
 
