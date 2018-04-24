@@ -4,11 +4,12 @@ var mongoose = require('mongoose');
 var router = function(app) {
 
 
-  app.get('/user', function(req, res) {
+  app.get('/registration', function(req, res) {
 
-    mongoose.model('users').findOne({'emailId':'karthik.ilango@siriuscom.com'},function(err,users){
-      res.send(users);
-    })
+    res.render("registration",{
+
+    });
+
   });
 
 
@@ -20,11 +21,25 @@ var router = function(app) {
     });
 
 
-  app.get('/register', function(req, res) {
 
-    res.render("demo", {
-    })
-  });
+app.get('/identify/:customerID', function(req, res) {
+
+    console.log("customer id"+req.params.customerID);
+
+    var customerID = req.params.customerID;
+
+    mongoose.model('users').findOne({'customerID':customerID},function(err,user){
+
+        if(err){
+          res.send("No customer found");
+        } else{
+            //res.responseText = user;
+            var responseText = user;
+            res.send(responseText);
+        }
+
+   })
+});
 
 
   app.post('/enrollProfile', function(req, res) {
