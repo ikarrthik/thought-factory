@@ -74,28 +74,34 @@
                </div>
              </div>
 
+
         <div class="recording section">
                 <div>
                   <label> Start Recording</label>
-                  <a  class="waves-effect waves-light btn-floating" onclick="storeAudioBlob()"><i class="material-icons prefix">mic</i></a>
+                  <a  class="waves-effect waves-light btn-floating" onclick="loginStoreAudioBlob()"><i class="material-icons prefix">mic</i></a>
 
                  <!-- <button onclick="enrollNewProfile(); " class="waves-effect waves-light btn-floating" ><i class="material-icons left">mic</i></button> -->
                </div>
+          </div>
 
-         
+          <div class="phrase">
+                  <img width="300" height="60" src="images/phrase2.png" alt="Captcha">
+                    <!-- <pre id="log"> </pre> -->
+            </div>
 
+          <div id="audio">
 
           </div>
          <div class="section recording">
                  <div>
-                   <a class="btn waves-effect waves-light" onclick="identifyProfile()">Submit
+                   <a class="btn waves-effect waves-light" onclick="verifyProfileAndAuthenticate()">Submit
                        <i class="material-icons right">send</i>
                      </a>
 
                      </div>
           </div>
           <div>
-            <pre id="log"> </pre>
+            <pre id="error"> </pre>
           </div>
         </form>
 

@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var router = function(app) {
 
 
-  app.get('/registration', function(req, res) {
+app.get('/registration', function(req, res) {
 
     res.render("registration",{
 
@@ -12,15 +12,12 @@ var router = function(app) {
 
   });
 
-
-    app.get('/axis-bank', function(req, res) {
+  app.get('/axis-bank', function(req, res) {
 
         res.render("home",{
 
         });
     });
-
-
 
 app.get('/identify/:customerID', function(req, res) {
 
@@ -34,6 +31,9 @@ app.get('/identify/:customerID', function(req, res) {
           res.send("No customer found");
         } else{
             //res.responseText = user;
+            console.log("user profile Id",user);
+            console.log("value" , user);
+
             var responseText = user;
             res.send(responseText);
         }
@@ -41,11 +41,32 @@ app.get('/identify/:customerID', function(req, res) {
    })
 });
 
+app.post('/status/:customerID', function(req, res) {
+
+    console.log("customer id"+req.params.customerID);
+
+    var customerID = req.params.customerID;
+
+    res.send("success");
+
+});
+app.get('/dashboard/:customerID', function(req, res) {
+  console.log("customer id: "+req.params.customerID);
+
+  var customerID = req.params.customerID;
+
+    mongoose.model('users').findOne({'customerID':customerID},function(err,user){
+
+    console.log("userrrrr",user);
+
+    res.render("dashboard",{
+      'user':user
+    });
+ });
+});
 
 app.post('/enrollProfile', function(req, res) {
 
-  console.log("req",req);
-  console.log(req.body);
 
 
   var  stringify = JSON.stringify(req.body);

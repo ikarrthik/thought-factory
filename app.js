@@ -8,6 +8,7 @@ var constants = require('./constants/constant');
 // var index =require('./views/index');
 var app = express();
 
+
 //Body parser middleware
 
 app.use(bodyParser.json()); // for parsing application/json
