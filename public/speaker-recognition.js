@@ -400,6 +400,9 @@ function BurnItAll(mode = 'identification'){
 }
 
 function addAudioPlayer(blob){
+
+  convertAudioToText(blob);
+
   audioBlob = blob;
 	var url = URL.createObjectURL(blob);
 	var log = document.getElementById('log');
@@ -416,6 +419,27 @@ function addAudioPlayer(blob){
 
 	audio.appendChild(source);
 	log.parentNode.insertBefore(audio, log);
+}
+
+function convertAudioToText(blob){
+
+  var speechURL = 'https://speech.platform.bing.com/speech/recognition/interactive/cognitiveservices/v1?language=en-US&format=detailed';
+
+  var request = new XMLHttpRequest();
+  request.open("POST", speechURL, true);
+
+  request.setRequestHeader('Content-Type','audio/wav; codec=audio/pcm; samplerate=16000');
+  request.setRequestHeader('Ocp-Apim-Subscription-Key', '713ff6db1d11463e89d94e07042c086c');
+
+  request.onload = function () {
+
+    var response  = request.responseText;
+
+    console.log(response);
+  };
+
+  request.send(blob);
+
 }
 
 // found on SO: vanilla javascript queystring management
