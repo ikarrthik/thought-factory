@@ -1,145 +1,146 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!-- Compiled and minified CSS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 
 
-  <link rel="stylesheet" href="utility.css">
+    <link rel="stylesheet" href="utility.css">
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-   pre#log{
-       height:500px;
-       overflow:auto;
-       font-size:1.2em;
-   }
-   audio {
-       display:block;
-   }
-   button {
-    background-color: #008CBA;
-    border: none;
-    color: white;
-    padding: 0.7em;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1.3em;
-   }
-</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        pre#log {
+            height: 500px;
+            overflow: auto;
+            font-size: 1.2em;
+        }
+
+        audio {
+            display: block;
+        }
+
+        button {
+            background-color: #008CBA;
+            border: none;
+            color: white;
+            padding: 0.7em;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.3em;
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="container left-container fifty-percent-width left">
-    <div>
-      <!-- <img src="images/incognito.png" height="150" width="150"  alt="logo"> -->
-      <h1 class="heading"> Team Incognito </h1>
-    </div>
+    <div class="container left-container fifty-percent-width left">
+        <div>
+            <!-- <img src="images/incognito.png" height="150" width="150"  alt="logo"> -->
+            <h1 class="heading"> Team Incognito </h1>
+        </div>
 
-    <div class="incognito">
-      <img src="images/avatar1.png" alt="Avatar">
-      <img src="images/avatar2.png" alt="Avatar">
+        <div class="incognito">
+            <img src="images/avatar1.png" alt="Avatar">
+            <img src="images/avatar2.png" alt="Avatar">
 
 
-    </div>
+        </div>
 
-    <div class="incognito">
-      <img src="images/avatar3.png" alt="Avatar">
-      <img src="images/avatar4.png" alt="Avatar">
+        <div class="incognito">
+            <img src="images/avatar3.png" alt="Avatar">
+            <img src="images/avatar4.png" alt="Avatar">
 
-    </div>
+        </div>
 
-    <div class="registration">
-      <a class="btn waves-effect waves-light" href="/registration" >New Registration
+        <div class="registration">
+            <a class="btn waves-effect waves-light" href="/registration">New Registration
           <i class="material-icons right">headset_mic</i>
         </a>
+        </div>
     </div>
-  </div>
 
-  <div class="card container fifty-percent-width right">
+    <div class="card container right-container fifty-percent-width right">
 
-    <div class="row login form-container">
-          <form class="col s12">
-            <img src = "images/axis-bank.png" height="90" width="300" />
+        <div class="row login form-container">
+            <form class="col s12">
+                <img src="images/axis-bank.png" height="90" width="300" />
 
-             <div class="section">
-               <div class="input-field col s6">
-                 <i class="material-icons prefix">account_circle</i>
-                 <input id="customer_id" type="text" class="validate">
-                 <label for="customer_id">Customer ID</label>
-               </div>
-             </div>
+                <div class="section">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="customer_id" type="text" class="validate">
+                        <label for="customer_id">Customer ID</label>
+                    </div>
+                </div>
 
 
-        <div class="recording section">
-                <div>
-                  <label> Start Recording</label>
-                  <a  class="waves-effect waves-light btn-floating" onclick="loginStoreAudioBlob()"><i class="material-icons prefix">mic</i></a>
+                <div class="recording section">
+                    <div>
+                      
+                      <div class="progress" style="width: 80%; display: none;">
+                          <div class="determinate" style="width: 10%"></div>
+                      </div>
 
-                 <!-- <button onclick="enrollNewProfile(); " class="waves-effect waves-light btn-floating" ><i class="material-icons left">mic</i></button> -->
-               </div>
-          </div>
+                        <label> Start Recording</label>
+                        <a class="waves-effect waves-light btn-floating" onclick="loginStoreAudioBlob()"><i class="material-icons prefix">mic</i></a>
 
-          <div class="phrase">
-                  <img width="300" height="60" src="images/phrase2.png" alt="Captcha">
+                        <!-- <button onclick="enrollNewProfile(); " class="waves-effect waves-light btn-floating" ><i class="material-icons left">mic</i></button> -->
+                    </div>
+                </div>
+
+                <div class="phrase">
+                    <img width="300" height="60" src="images/phrase2.png" alt="Captcha">
                     <!-- <pre id="log"> </pre> -->
-            </div>
+                </div>
 
-          <div id="audio">
+                <div id="audio">
 
-          </div>
-         <div class="section recording">
-                 <div>
-                   <a class="btn waves-effect waves-light" onclick="verifyProfileAndAuthenticate()">Submit
-                       <i class="material-icons right">send</i>
-                     </a>
+                </div>
 
-                     </div>
-          </div>
-          <div>
-            <pre id="error"> </pre>
-          </div>
-        </form>
+                </div>
+                <div>
+                    <pre id="error"> </pre>
+                </div>
+            </form>
 
+        </div>
     </div>
-</div>
 
+    <script src="speaker-recognition.js"></script>
+    <script src="recorder.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <script>
+        var recorder;
+        var audio_context;
 
+        function onMediaSuccess(stream, callback, secondsOfAudio) {
+            audio_context = audio_context || new window.AudioContext;
+            var input = audio_context.createMediaStreamSource(stream);
+            recorder = new Recorder(input);
+            recorder.record();
 
+            setTimeout(() => {
+                StopListening(callback);
+            }, secondsOfAudio * 1000);
+        }
 
-<script src="speaker-recognition.js"></script>
-<script src="recorder.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-<link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
-<script>
+        function StopListening(callback) {
+            console.log('...working...');
+            recorder && recorder.stop();
+            recorder.exportWAV(function(blob) {
+                callback(blob);
+            });
+            recorder.clear();
+        }
+    </script>
+</body>
 
-var recorder;
-var audio_context;
-
-function onMediaSuccess(stream, callback, secondsOfAudio) {
-    audio_context = audio_context || new window.AudioContext;
-    var input = audio_context.createMediaStreamSource(stream);
-    recorder = new Recorder(input);
-    recorder.record();
-
-	setTimeout(() => { StopListening(callback); }, secondsOfAudio*1000);
-}
-
-function StopListening(callback){
-	console.log('...working...');
-    recorder && recorder.stop();
-    recorder.exportWAV(function(blob) {
-        callback(blob);
-    });
-    recorder.clear();
-}
-
-</script>
- </body>
 </html>

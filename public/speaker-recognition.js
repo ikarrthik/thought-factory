@@ -1,60 +1,45 @@
-
 var audioBlob;
 var statusInVerification = "failure";
 var profileId;
+var subscriptionKey = 'a3e8a12a0d6e4506b6247534f95f78ac';
+var speechSubscriptionKey = '427ce0ad79c44e4db09e5b435ec9a311';
 
-function storeAudioBlob(){
-	navigator.getUserMedia({audio: true}, function(stream){
-		onMediaSuccess(stream, addAudioPlayer, 5);
-		console.log("StoreAudioBlob");
-	}, onMediaError);
+//Registration
+function storeAudioBlob() {
+    navigator.getUserMedia({
+        audio: true
+    }, function(stream) {
+        $('.progress').show();
+        onMediaSuccess(stream, addAudioPlayer, 3);
+    }, onMediaError);
 }
 
 
-function loginStoreAudioBlob(){
-	navigator.getUserMedia({audio: true}, function(stream){
-		onMediaSuccess(stream,storeBlob , 5);
-		console.log("StoreAudioBlob");
-	}, onMediaError);
+//Login
+function loginStoreAudioBlob() {
+    navigator.getUserMedia({
+        audio: true
+    }, function(stream) {
+        $('.progress').show();
+        onMediaSuccess(stream, verifyProfileAndAuthenticate, 3);
+    }, onMediaError);
 }
 
-function storeBlob(blob){
-	audioBlob = blob;
+//Payment
+function pay() {
+    navigator.getUserMedia({
+        audio: true
+    }, function(stream) {
+        onMediaSuccess(stream, speechToText, 4);
+    }, onMediaError);
 }
 
-function enrollNewProfile(){
-	navigator.getUserMedia({audio: true}, function(stream){
-		// console.log('I\'m listening... just start talking for a few seconds...');
-		// console.log('Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)]);
-		onMediaSuccess(stream, createProfile, 15);
-	}, onMediaError);
+
+function storeBlob(blob) {
+    audioBlob = blob;
 }
 
-function enrollNewVerificationProfile(){
-	navigator.getUserMedia({audio: true}, function(stream){
-		// console.log('I\'m listening... say one of the predefined phrases...');
-		onMediaSuccess(stream, createVerificationProfile, 4);
-	}, onMediaError);
-}
 
-function startListeningForIdentification(){
-	if (profileIds.length > 0 ){
-		// console.log('I\'m listening... just start talking for a few seconds...');
-		// console.log('Maybe read this: \n' + thingsToRead[Math.floor(Math.random() * thingsToRead.length)]);
-		navigator.getUserMedia({audio: true}, function(stream){onMediaSuccess(stream, identifyProfile, 10)}, onMediaError);
-	} else {
-		console.log('No profiles enrolled yet! Click the other button...');
-	}
-}
-
-function startListeningForVerification(){
-	if (verificationProfile.profileId){
-		// console.log('I\'m listening... say your predefined phrase...');
-		navigator.getUserMedia({audio: true}, function(stream){onMediaSuccess(stream, verifyProfileAndAuthenticate, 4)}, onMediaError);
-	} else {
-		// console.log('No verification profile enrolled yet! Click the other button...');
-	}
-}
 
 function onMediaError(e) {
     console.error('media error', e);
@@ -63,306 +48,326 @@ function onMediaError(e) {
 
 
 
-
 //Login authenticate method
-function verifyProfileAndAuthenticate(){
-	//addAudioPlayer(blob);
+function verifyProfileAndAuthenticate(blob) {
+    //addAudioPlayer(blob);
 
-  //Get the verification profile using the customer id
+    //Get the verification profile using the customer id
     var customerID = document.getElementById('customer_id').value;
 
-		console.log("customerID",customerID);
-    var url = "/identify/"+customerID;
+    console.log("customerID", customerID);
+    var url = "/identify/" + customerID;
 
-  	var request = new XMLHttpRequest();
-  	request.open("GET",url,true);
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
 
-  	request.onload = function(){
+    request.onload = function() {
 
-                var jsonResponse = JSON.parse(request.responseText);
+        var jsonResponse = JSON.parse(request.responseText);
 
-								console.log("jsonResponse",jsonResponse)
+        console.log("jsonResponse", jsonResponse)
 
-                var profileId = jsonResponse.profileID;
-                var blob = audioBlob;
-								var customerID = document.getElementById('customer_id').value;
-                const identify = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=' + profileId;
+        var profileId = jsonResponse.profileID;
+        var customerID = document.getElementById('customer_id').value;
+        var identify = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=' + profileId;
 
-                var xmlRequest = new XMLHttpRequest();
-                xmlRequest.open("POST", identify, true);
+        var xmlRequest = new XMLHttpRequest();
+        xmlRequest.open("POST", identify, true);
 
-                xmlRequest.setRequestHeader('Content-Type','application/json');
-                xmlRequest.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
+        xmlRequest.setRequestHeader('Content-Type', 'application/json');
+        xmlRequest.setRequestHeader('Ocp-Apim-Subscription-Key', subscriptionKey);
 
-                xmlRequest.onload = function () {
-                  console.log('verify profile');
-                  console.log(xmlRequest.responseText);
-									var response = JSON.parse(xmlRequest.responseText);
-									if(response.result == "Accept"){
-										window.location.href = "/dashboard/"+customerID;
-									}else{
-										//rejected
-										$('#error').text("Your are not authenticated..Try Again!!!");
-									}
+        xmlRequest.onload = function() {
+            $('.determinate').css('width','50%');
+            console.log('verify profile');
+            console.log(xmlRequest.responseText);
+            var response = JSON.parse(xmlRequest.responseText);
+            if (response.result == "Accept") {
+                $('.determinate').css('width','100%');
+                window.location.href = "/dashboard/" + customerID;
+                $('.progress').hide();
+                $('.determinate').css('width','10%');
+            } else {
+                //rejected
+                setTimeout (function(){
+                  $('.progress').hide();
+                  $('.determinate').css('width','10%');
+                }, 1000);
+                $('#error').text("Your are not authenticated..Try Again!!!");
+            }
 
-                };
-
-                xmlRequest.send(blob);
-
-
-  	};
-
-  	request.send();
-
-
+        };
+        xmlRequest.send(blob);
+    };
+    request.send();
 
 }
 
 
-function createProfileForFirstTime(blob){
+function createProfileForFirstTime(blob) {
 
-    	var create = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles';
+    var create = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles';
 
-    	var request = new XMLHttpRequest();
-    	request.open("POST", create, true);
+    var request = new XMLHttpRequest();
+    request.open("POST", create, true);
 
-    	request.setRequestHeader('Content-Type','application/json');
-    	request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.setRequestHeader('Ocp-Apim-Subscription-Key', subscriptionKey);
 
-    	request.onload = function () {
-    		console.log('creating profile');
-    		console.log(request.responseText);
+    request.onload = function() {
+        $('.determinate').css('width','60%');
+        console.log('creating profile');
+        console.log(request.responseText);
 
-    		var json = JSON.parse(request.responseText);
-    		var profileId = json.verificationProfileId;
+        var json = JSON.parse(request.responseText);
+        var profileId = json.verificationProfileId;
 
-    		// Now we can enrol this profile using the profileId
-    		 enrollProfileAudioForVerification(blob, profileId);
-				// console.log("responseText in createProfileForFirstTime",responseText)
-				// return responseText;
-				console.log("enrollProfileAudioForVerification");
-    	};
+        // Now we can enrol this profile using the profileId
+        enrollProfileAudioForVerification(blob, profileId);
+        // console.log("responseText in createProfileForFirstTime",responseText)
+        // return responseText;
+        console.log("enrollProfileAudioForVerification");
+    };
 
-    	request.send(JSON.stringify({ 'locale' :'en-us'}));
-  }
+    request.send(JSON.stringify({
+        'locale': 'en-us'
+    }));
+}
 
 
 
 
+function enrollProfileAudioForVerification(blob, profileId) {
+    //addAudioPlayer(blob);
+    console.log("enrollProfileAudioForVerification");
 
-function enrollProfileAudioForVerification(blob, profileId){
-	//addAudioPlayer(blob);
-console.log("enrollProfileAudioForVerification");
+    if (profileId == undefined) {
+        console.log("Failed to create a profile for verification; try again");
+        return;
+    }
 
-	if (profileId == undefined)
-	{
-		console.log("Failed to create a profile for verification; try again");
-		return;
-	}
+    const enroll = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/' + profileId + '/enroll';
 
-	const enroll = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/'+profileId+'/enroll';
+    console.log("enroll", enroll);
 
-	console.log("enroll",enroll);
+    var request = new XMLHttpRequest();
+    request.open("POST", enroll, true);
+
+    request.setRequestHeader('Content-Type', 'multipart/form-data');
+    request.setRequestHeader('Ocp-Apim-Subscription-Key', subscriptionKey);
+
+    request.onload = function() {
+        $('.determinate').css('width','90%');
+        var responseText = null;
+
+        console.log('enrolling');
+        console.log(request.responseText);
+        var json = JSON.parse(request.responseText);
+        //responseText = "success";
+        if (json.enrollmentStatus == "Enrolling" && json.enrollmentsCount.toString() == "1") {
+            $('.determinate').css('width','100%');
+            setTimeout (function(){
+              $('.progress').hide();
+              $('.determinate').css('width','10%');
+            }, 2000);
+            enableEnrollingCheckbox();
+            saveEnrollment(profileId);
+        } else if (json.enrollmentStatus == "Enrolling" && json.enrollmentsCount.toString() == "2") {
+            $('.determinate').css('width','100%');
+            setTimeout (function(){
+              $('.progress').hide();
+              $('.determinate').css('width','10%');
+            }, 2000);
+            console.log("enrollmentsCount")
+            enableTrainingCheckbox();
+        } else if (json.enrollmentStatus == "Enrolled") {
+            $('.determinate').css('width','100%');
+            setTimeout (function(){
+              $('.progress').hide();
+              $('.determinate').css('width','10%');
+            }, 2000);
+            enableEnrolledCheckbox();
+            $('.proceed').text('Your account has been enrolled. Please login for authentication');
+        }
+        console.log("response", json);
+        console.log("statusInVerification", statusInVerification);
+
+    };
+
+    request.send(blob);
+}
+
+
+
+function saveEnrollment(profileId) {
+    var customerID = document.getElementById('customer_id').value;
+    var accountID = document.getElementById('account_id').value;
+    var name = document.getElementById('customer_name').value;
+    var status;
+
+    var request = new XMLHttpRequest();
+    request.open("POST", '/enrollProfile', true);
+
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    request.onload = function() {
+        console.log('getting status');
+        console.log(request.responseText);
+    };
+    request.send("customerID=" + customerID + "&name=" + name + "&accountID=" + accountID + "&profileID=" + profileId);
+
+}
+
+
+
+function createVerificationProfile(blob) {
+
+    if (verificationProfile && verificationProfile.profileId) {
+        if (verificationProfile.remainingEnrollments == 0) {
+            console.log("Verification enrollment already completed");
+            return;
+        } else {
+            console.log("Verification enrollments remaining: " + verificationProfile.remainingEnrollments);
+            enrollProfileAudioForVerification(blob, verificationProfile.profileId);
+            return;
+        }
+    }
+
+    var create = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles';
+
+    var request = new XMLHttpRequest();
+    request.open("POST", create, true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.setRequestHeader('Ocp-Apim-Subscription-Key', subscriptionKey);
+
+    request.onload = function() {
+        var json = JSON.parse(request.responseText);
+        var profileId = json.verificationProfileId;
+        verificationProfile.profileId = profileId;
+
+        // Now we can enrol this profile with the profileId
+        enrollProfileAudioForVerification(blob, profileId);
+    };
+
+    request.send(JSON.stringify({
+        'locale': 'en-us'
+    }));
+}
+
+
+
+//Add the audio to the UI
+function addAudioPlayer(blob) {
+
+    //  convertAudioToText(blob);
+    var customerID = document.getElementById('customer_id').value;
+
+    console.log("customerId", customerID);
+    var url = "/identify/" + customerID;
+    console.log("getProfileIdFromCustomerId");
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
+
+    request.onload = function() {
+
+        $('.determinate').css('width','40%');
+        console.log("Profile id from the data base");
+
+        console.log(request.responseText);
+        if (request.responseText != '' && request.responseText != undefined) {
+            var response = JSON.parse(request.responseText);
+            console.log(response.profileID);
+            profileId = response.profileID;
+        }
+
+        if (profileId == undefined || profileId == '') {
+            console.log("first time enrollment");
+            createProfileForFirstTime(blob);
+            console.log("statusInVerification in addAudioPlayer", statusInVerification);
+            // if profileId has been created then add it in the UI and db with the status
+            //  updateCustomerEnrollmentStatus(customerID ,status);
+        } else {
+            var status = enrollProfileAudioForVerification(blob, profileId);
+            // Alread the profile id is present and use the profile id to train other two times
+        }
+
+
+    }
+    request.send();
+
+}
+
+function speechToText(blob){
+	var create = 'https://speech.platform.bing.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US';
+
+  console.log("speech to text api calls");
 
 	var request = new XMLHttpRequest();
-	request.open("POST", enroll, true);
+	request.open("POST", create, true);
 
-	request.setRequestHeader('Content-Type','multipart/form-data');
-	request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
+	request.setRequestHeader('Content-Type', 'audio/wav; codec=audio/pcm; samplerate=16000');
+	request.setRequestHeader('Ocp-Apim-Subscription-Key', speechSubscriptionKey);
 
-	request.onload = function () {
-		console.log("qwerfhbed");
-		var responseText = null;
+	request.onload = function() {
 
-			console.log('enrolling');
+      console.log("function start");
 			console.log(request.responseText);
-			var json = JSON.parse(request.responseText);
-		 //responseText = "success";
-		 if(json.enrollmentStatus == "Enrolling" && json.enrollmentsCount.toString() == "1"){
-		 			enableEnrollingCheckbox();
-					saveEnrollment(profileId);
-			 }else if (json.enrollmentStatus == "Enrolling" && json.enrollmentsCount.toString() == "2" ){
-				 console.log("enrollmentsCount")
-				 	enableTrainingCheckbox();
-			 }else if(json.enrollmentStatus == "Enrolled"){
-				 	enableEnrolledCheckbox();
-					$('.proceed').text('Your account has been enrolled. Please login for authentication') ;
-			 }
-			console.log("response",json);
-			console.log("statusInVerification",statusInVerification);
 
+			var textResponse = JSON.parse(request.responseText);
+      console.log("textResponse:",textResponse);
+      var text = textResponse.DisplayText;
+      console.log("text:",text);
+      var dt = new Date();
+      var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+      chatJS.userMessage(text, time);
+
+			var url = "/pay/"+text;
+
+			var payRequest = new XMLHttpRequest();
+			payRequest.open("GET", url, true);
+
+			payRequest.onload = function() {
+
+        console.log("Response from NLP");
+        console.log(payRequest);
+				console.log(payRequest.responseText);
+        var dt = new Date();
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+        chatJS.botMessage(payRequest.responseText, time);
+			}
+			payRequest.send();
 	};
 
 	request.send(blob);
-  }
-
-
-
-function saveEnrollment(profileId){
-  	var customerID = document.getElementById('customer_id').value;
-    var accountID =  document.getElementById('account_id').value;
-    var name =  document.getElementById('customer_name').value;
-    var status;
-
-  	var request = new XMLHttpRequest();
-  	request.open("POST",'/enrollProfile', true);
-
-  	request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-  	request.onload = function()
-  	{
-  		console.log('getting status');
-  		console.log(request.responseText);
-  	};
-  	request.send("customerID="+customerID+"&name="+name+"&accountID="+accountID+"&profileID="+profileId);
 
 }
 
 
 
-function createVerificationProfile(blob){
 
-	if (verificationProfile && verificationProfile.profileId)
-	{
-		if (verificationProfile.remainingEnrollments == 0)
-		{
-			console.log("Verification enrollment already completed");
-			return;
-		}
-		else
-		{
-			console.log("Verification enrollments remaining: " + verificationProfile.remainingEnrollments);
-			enrollProfileAudioForVerification(blob, verificationProfile.profileId);
-			return;
-		}
-	}
-
-	var create = 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles';
-
-	var request = new XMLHttpRequest();
-		request.open("POST", create, true);
-		request.setRequestHeader('Content-Type','application/json');
-		request.setRequestHeader('Ocp-Apim-Subscription-Key', '105a215562904fcfbc2e53687805b52c');
-
-		request.onload = function () {
-			var json = JSON.parse(request.responseText);
-			var profileId = json.verificationProfileId;
-			verificationProfile.profileId = profileId;
-
-			// Now we can enrol this profile with the profileId
-			enrollProfileAudioForVerification(blob, profileId);
-		};
-
-	request.send(JSON.stringify({ 'locale' :'en-us'}));
+function enableEnrollingCheckbox() {
+    document.getElementById('enrolling').setAttribute('checked', 'checked');
 }
 
-
-
-
-function getProfileIdFromCustomerId(customerID){
-
-      // var url = "/identify/"+customerID;
-			//
-			// console.log("getProfileIdFromCustomerId");
-			//
-      // var request = new XMLHttpRequest();
-      // request.open("GET",url,true);
-      // //console.log(request);
-			//
-      // request.onload = function(){
-			//
-      //     console.log("Profile id from the data base");
-			//
-			// 			var response = JSON.parse(request.responseText);
-      //     	console.log(response);
-			//
-			// 	//	return response.profileId;
-			//
-		  // }
-      // request.send();
-
-}
-//Add the audio to the UI
-function addAudioPlayer(blob){
-
-  //  convertAudioToText(blob);
-  var customerID = document.getElementById('customer_id').value;
-
-	console.log("customerId",customerID);
-
-	var url = "/identify/"+customerID;
-
-	console.log("getProfileIdFromCustomerId");
-
-	var request = new XMLHttpRequest();
-	request.open("GET",url,true);
-	//console.log(request);
-
-	request.onload = function(){
-
-			console.log("Profile id from the data base");
-
-				console.log(request.responseText);
-				if(request.responseText != '' && request.responseText != undefined ){
-					var response = JSON.parse(request.responseText);
-					console.log(response.profileID);
-					profileId = response.profileID;
-				}
-
-				if(profileId == undefined || profileId == ''){
-
-						var status = null;
-		        console.log("first time enrollment");
-		       createProfileForFirstTime(blob);
-					 console.log("statusInVerification in addAudioPlayer",statusInVerification);
-		        // if profileId has been created then add it in the UI and db with the status
-
-		      //  updateCustomerEnrollmentStatus(customerID ,status);
-
-		    } else{
-
-		         var status =   enrollProfileAudioForVerification(blob, profileId);
-
-		        //  updateCustomerEnrollmentStatus(customerID ,status);
-
-		      // Alread the profile id is present and use the profile id to train other two times
-
-		    }
-
-		//	return response.profileId;
-
-	}
-	request.send();
-
-    //var profileId = getProfileIdFromCustomerId(customerID);
-
-
-
+function enableTrainingCheckbox() {
+    document.getElementById('training').setAttribute('checked', 'checked');
 }
 
-function enableEnrollingCheckbox(){
-  document.getElementById('enrolling').setAttribute('checked','checked');
+function enableEnrolledCheckbox() {
+    document.getElementById('enrolled').setAttribute('checked', 'checked');
 }
 
-function enableTrainingCheckbox(){
-  document.getElementById('training').setAttribute('checked','checked');
-}
+function updateCustomerEnrollmentStatus(customerId, status) {
 
-function enableEnrolledCheckbox(){
-  document.getElementById('enrolled').setAttribute('checked','checked');
-}
+    var url = "/status/" + customerId;
 
-function updateCustomerEnrollmentStatus(customerId ,status){
+    var request = new XMLHttpRequest();
+    request.open("POST", url, true);
+    console.log(request);
 
-  var url = "/status/"+customerId;
+    request.onload = function() {
 
-  var request = new XMLHttpRequest();
-  request.open("POST",url,true);
-  console.log(request);
-
-  request.onload = function(){
-
-      console.log("Profile id from the data base");
-      response = request.responseText;
-  }
-  request.send("customerID="+customerId+"status="+status);
+        console.log("Profile id from the data base");
+        response = request.responseText;
+    }
+    request.send("customerID=" + customerId + "s`tatus=" + status);
 }
