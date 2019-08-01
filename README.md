@@ -1,3 +1,8 @@
+#Hackathon-2018
+
+A conversation bot for voice authentication built for the AXIS-BANK Rearsh and development Hackathon.
+
+
 How to run ?
 
 Download the code and run npm start in the root directory.
