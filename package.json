@@ -11,7 +11,7 @@
     "express": "~4.15.5",
     "express-validator": "^4.3.0",
     "materialize-css": "^0.100.2",
-    "mongoose": "^5.0.14",
+    "mongoose": "^5.7.5",
     "nodemon": "^1.17.3",
     "promise": "^8.0.1",
     "request": "^2.83.0",
